@@ -7,10 +7,6 @@ const gallery = document.getElementById("gallery")
 const messages = document.getElementById("messages")
 
 
-/* =========================
-   UPLOAD IMAGE
-========================= */
-
 window.uploadImage = async function(){
 
 let file = document.getElementById("uploadImage").files[0]
@@ -54,11 +50,6 @@ loadGallery()
 }
 
 
-
-/* =========================
-   LOAD GALLERY
-========================= */
-
 async function loadGallery(){
 
 gallery.innerHTML = ""
@@ -93,10 +84,6 @@ loadGallery()
 
 
 
-/* =========================
-   SEND MESSAGE
-========================= */
-
 window.sendMessage = async function(){
 
 let name = document.getElementById("nameInput").value || "Guest"
@@ -120,10 +107,6 @@ loadChat()
 }
 
 
-
-/* =========================
-   LOAD CHAT
-========================= */
 
 async function loadChat(){
 
