@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="vi">
 
 <head>
@@ -7,59 +8,161 @@
 <title>Alicehyhy</title>
 
 <link rel="stylesheet" href="css/style.css">
-
 </head>
 
 <body>
 
+<!-- CHAT BUTTON -->
+
+<div id="chatButton" onclick="toggleChat()">
+<img src="images/chat.png">
+</div>
+
 <header>
+
 <div class="logo">アリスハイハイ</div>
+
+<div class="header-right">
+
+<button id="createBtn" class="create-btn github-btn" onclick="openSignup()">
+
+<svg class="github-icon" viewBox="0 0 16 16">
+<path fill="currentColor"
+d="M8 0C3.58 0 0 3.58 0 8
+c0 3.54 2.29 6.53 5.47 7.59
+.4.07.55-.17.55-.38
+0-.19-.01-.82-.01-1.49
+-2.01.37-2.53-.49-2.69-.94
+-.09-.23-.48-.94-.82-1.13
+-.28-.15-.68-.52-.01-.53
+.63-.01 1.08.58 1.23.82
+.72 1.21 1.87.87 2.33.66
+.07-.52.28-.87.51-1.07
+-1.78-.2-3.64-.89-3.64-3.95
+0-.87.31-1.59.82-2.15
+-.08-.2-.36-1.02.08-2.12
+0 0 .67-.21 2.2.82
+.64-.18 1.32-.27 2-.27
+.68 0 1.36.09 2 .27
+1.53-1.04 2.2-.82 2.2-.82
+.44 1.1.16 1.92.08 2.12
+.51.56.82 1.27.82 2.15
+0 3.07-1.87 3.75-3.65 3.95
+.29.25.54.73.54 1.48
+0 1.07-.01 1.93-.01 2.2
+0 .21.15.46.55.38
+A8.01 8.01 0 0 0 16 8
+c0-4.42-3.58-8-8-8z"/>
+</svg>
+
+Account </button>
+
+<div class="account-area">
+
+<img id="userAvatar" src="images/avatar.jpg" class="header-avatar">
+
+<button id="logoutBtn" onclick="logout()">Logout</button>
+
+</div>
+
+</div>
+
 </header>
+
+<!-- GALLERY -->
 
 <section class="gallery">
 
-<h2>📸写真</h2>
+<h2>📸 写真</h2>
 
 <div class="upload">
+
 <input type="file" id="uploadImage" hidden>
-<label for="uploadImage" class="btn">📁 写真を選択してください</label>
-<button class="btn" onclick="uploadImage()">アップロード</button>
+
+<label for="uploadImage" class="btn">
+📁 写真を選択してください
+</label>
+
+<button class="btn" onclick="uploadImage()">
+アップロード
+</button>
+
 </div>
 
 <div class="pinterest" id="gallery"></div>
 
 </section>
 
+<!-- IMAGE MODAL -->
+
 <div class="modal" id="imageModal">
 <img id="modalImg">
 </div>
 
-<section class="chat">
+<!-- CHAT BOX -->
 
-<h2>💬 メッセージを残してください</h2>
+<div id="chatBox">
 
-<input id="nameInput" placeholder="あなたの名前">
+<div class="chat-header">
+💬 メッセージ
+</div>
 
-<textarea id="textInput" rows="3" placeholder="メッセージを書いてください"></textarea>
+<div id="messages" class="discord-messages"></div>
+
+<div class="chat-input">
+
+<textarea id="textInput" placeholder="メッセージを書いてください"></textarea>
 
 <div class="chat-tools">
 
-<button class="btn" onclick="addEmoji()">😀</button>
+<button onclick="addEmoji()">😀</button>
 
 <input type="file" id="chatImage" hidden>
-<label for="chatImage" class="btn">🖼</label>
+<label for="chatImage">🖼</label>
 
-<button class="btn" onclick="clearChat()">🧹</button>
+<button onclick="clearChat()">🧹</button>
 
-<button class="btn" onclick="sendMessage()">🚀</button>
+<button onclick="sendMessage()">➤</button>
 
 </div>
 
-</section>
+</div>
 
-<div id="messages"></div>
+</div>
+
+<!-- ACCOUNT MODAL -->
+
+<div class="signup-modal" id="signupModal">
+
+<div class="signup-box" id="signupBox">
+
+<div class="window-controls">
+<div class="dot green" onclick="closeSignup()"></div>
+<div class="dot yellow" onclick="closeSignup()"></div>
+<div class="dot red" onclick="closeSignup()"></div>
+</div>
+
+<img class="avatar-login" src="images/avatar.jpg">
+
+<h2 id="authTitle">Account</h2>
+
+<input id="user" placeholder="Username">
+<input id="pass" type="password" placeholder="Password">
+
+<div id="authMessage"></div>
+
+<button class="register-btn github-btn" onclick="register()">Create Account</button>
+
+<button class="login-btn" onclick="login()">Login</button>
+
+</div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script src="js/script.js"></script>
 
 </body>
 </html>
+
