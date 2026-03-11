@@ -79,9 +79,8 @@ let card = document.createElement("div")
 card.className="card"
 
 card.innerHTML=`
-<img src="${item.image}" onclick="openImage('${item.image}')">
+<img src="${item.image}">
 <div class="heart">❤️ ${item.likes}</div>
-`
 `
 
 gallery.appendChild(card)
@@ -157,4 +156,3 @@ messages.appendChild(div)
 }
 
 loadChat()
-
