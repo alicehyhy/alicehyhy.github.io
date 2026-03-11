@@ -79,8 +79,9 @@ let card = document.createElement("div")
 card.className="card"
 
 card.innerHTML=`
-<img src="${item.image}">
+<img src="${item.image}" onclick="openImage('${item.image}')">
 <div class="heart">❤️ ${item.likes}</div>
+`
 `
 
 gallery.appendChild(card)
@@ -156,3 +157,36 @@ messages.appendChild(div)
 }
 
 loadChat()
+
+
+window.openImage = function(url){
+
+const modal = document.getElementById("imageModal")
+const modalImg = document.getElementById("modalImg")
+
+modal.style.display = "flex"
+modalImg.src = url
+
+}
+
+document.getElementById("imageModal").onclick = function(){
+this.style.display = "none"
+}
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.modal img{
+max-width:90%;
+max-height:90%;
+border-radius:10px;
+}
