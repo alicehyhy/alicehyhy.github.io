@@ -1,15 +1,9 @@
-
-
-/* BODY */
-
 body{
 margin:0;
 font-family:Arial;
 background:#0d1117;
 color:#c9d1d9;
 }
-
-/* HEADER */
 
 header{
 display:flex;
@@ -25,8 +19,6 @@ font-size:22px;
 font-weight:bold;
 color:#ff4da6;
 }
-
-/* GALLERY */
 
 .gallery{
 max-width:1200px;
@@ -68,8 +60,6 @@ border-radius:6px;
 cursor:pointer;
 }
 
-/* COMMENT */
-
 .comment-box{
 padding:10px;
 }
@@ -92,8 +82,6 @@ border-radius:6px;
 cursor:pointer;
 }
 
-/* UPLOAD */
-
 .upload{
 margin:20px;
 display:flex;
@@ -109,8 +97,6 @@ border-radius:6px;
 color:white;
 cursor:pointer;
 }
-
-/* MODAL */
 
 .modal{
 display:none;
@@ -129,8 +115,6 @@ max-width:90%;
 max-height:90%;
 border-radius:10px;
 }
-
-/* CHAT */
 
 .chat{
 max-width:600px;
@@ -156,8 +140,6 @@ margin-bottom:10px;
 display:flex;
 gap:10px;
 }
-
-/* MESSAGES */
 
 #messages{
 max-width:700px;
