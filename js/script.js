@@ -1,30 +1,10 @@
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-
-import { getDatabase, ref, push, onChildAdded } 
-from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
-
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
-from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "alicehyhy-gallery.firebaseapp.com",
-  projectId: "alicehyhy-gallery",
-  storageBucket: "alicehyhy-gallery.firebasestorage.app",
-  messagingSenderId: "204662302298",
-  appId: "1:204662302298:web:5ca9bf9b83c5efa7fe5a63"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const storage = getStorage(app);
+const supabaseClient = supabase.createClient(
+"https://ihxewxqyplbfedxkxrsu.supabase.co",
+"sb_publishable_pgMFqgfZMVITkTQWM5i-1A_C-JB9xI_"
+)
 
 const gallery = document.getElementById("gallery")
 const messages = document.getElementById("messages")
-
 
 
 /* UPLOAD IMAGE */
@@ -32,78 +12,107 @@ const messages = document.getElementById("messages")
 window.uploadImage = async function(){
 
 let file=document.getElementById("uploadImage").files[0]
-
 if(!file) return
 
-let storageRef = sRef(storage,"images/"+Date.now()+file.name)
+let fileName=Date.now()+"_"+file.name
 
-await uploadBytes(storageRef,file)
+// upload lên storage
+await supabaseClient.storage
+.from("images")
+.upload(fileName,file)
 
-let url = await getDownloadURL(storageRef)
+// lấy link ảnh
+let {data} = supabaseClient.storage
+.from("images")
+.getPublicUrl(fileName)
 
-push(ref(db,"gallery"),{
-image:url,
-likes:0
-})
+let url=data.publicUrl
+
+// lưu database
+await supabaseClient
+.from("gallery")
+.insert([{image:url,likes:0}])
+
+loadGallery()
 
 }
 
 
 
-/* LOAD GALLERY REALTIME */
+/* LOAD GALLERY */
 
-onChildAdded(ref(db,"gallery"),(snap)=>{
+async function loadGallery(){
 
-let data=snap.val()
+let {data} = await supabaseClient
+.from("gallery")
+.select("*")
+.order("id",{ascending:false})
 
-let card=document.createElement("div")
-card.className="card"
+gallery.innerHTML=""
 
-card.innerHTML=`
-<img src="${data.image}">
-<div class="heart">❤️ ${data.likes}</div>
+data.forEach(img=>{
+
+gallery.innerHTML+=`
+<div class="card">
+<img src="${img.image}">
+<div class="heart">❤️ ${img.likes}</div>
+</div>
 `
 
-gallery.prepend(card)
-
 })
+
+}
 
 
 
 /* SEND MESSAGE */
 
-window.sendMessage=function(){
+window.sendMessage = async function(){
 
-let name=document.getElementById("nameInput").value
+let name=document.getElementById("nameInput").value || "Guest"
 let text=document.getElementById("textInput").value
 
-push(ref(db,"chat"),{
-name:name,
-text:text
-})
+if(!text) return
+
+await supabaseClient
+.from("chat")
+.insert([{name:name,text:text}])
 
 document.getElementById("textInput").value=""
+
+loadChat()
 
 }
 
 
 
-/* LOAD CHAT REALTIME */
+/* LOAD CHAT */
 
-onChildAdded(ref(db,"chat"),(snap)=>{
+async function loadChat(){
 
-let data=snap.val()
+let {data} = await supabaseClient
+.from("chat")
+.select("*")
+.order("id",{ascending:false})
 
-let msg=document.createElement("div")
-msg.className="msg"
+messages.innerHTML=""
 
-msg.innerHTML=`
-<b>${data.name}</b><br>
-${data.text}
+data.forEach(msg=>{
+
+messages.innerHTML+=`
+<div class="msg">
+<b>${msg.name}</b><br>
+${msg.text}
+</div>
 `
-
-messages.prepend(msg)
 
 })
 
-</script>
+}
+
+
+
+loadGallery()
+loadChat()
+
+setInterval(loadChat,2000)
