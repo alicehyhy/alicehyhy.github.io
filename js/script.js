@@ -1,7 +1,7 @@
 const SUPABASE_URL = "https://ihxewxqyplbfedxkxrsu.supabase.co"
 const SUPABASE_KEY = "sb_publishable_pgMFqgfZMVITkTQWM5i-1A_C-JB9xI_"
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 const gallery = document.getElementById("gallery")
 const messages = document.getElementById("messages")
@@ -22,30 +22,37 @@ return
 
 let fileName = Date.now() + "_" + file.name
 
-const { data, error } = await supabase.storage
+const { data, error } = await client.storage
 .from("images")
 .upload(fileName, file)
 
 if(error){
-console.error(error)
+console.error("Upload error:", error)
 alert("Upload lỗi")
 return
 }
 
-const { data: urlData } = supabase.storage
+const { data: urlData } = client.storage
 .from("images")
 .getPublicUrl(fileName)
 
 let imageUrl = urlData.publicUrl
 
 
-await supabase
+const { error: dbError } = await client
 .from("gallery")
 .insert([{ image: imageUrl, likes: 0 }])
+
+if(dbError){
+console.error("DB error:", dbError)
+alert("Lỗi lưu database")
+return
+}
 
 loadGallery()
 
 }
+
 
 
 /* =========================
@@ -56,10 +63,15 @@ async function loadGallery(){
 
 gallery.innerHTML = ""
 
-const { data } = await supabase
+const { data, error } = await client
 .from("gallery")
 .select("*")
 .order("id",{ascending:false})
+
+if(error){
+console.error(error)
+return
+}
 
 data.forEach(item=>{
 
@@ -87,20 +99,26 @@ loadGallery()
 
 window.sendMessage = async function(){
 
-let name = document.getElementById("nameInput").value
+let name = document.getElementById("nameInput").value || "Guest"
 let text = document.getElementById("textInput").value
 
 if(!text) return
 
-await supabase
+const { error } = await client
 .from("chat")
 .insert([{ name:name, text:text }])
+
+if(error){
+console.error(error)
+return
+}
 
 document.getElementById("textInput").value=""
 
 loadChat()
 
 }
+
 
 
 /* =========================
@@ -111,10 +129,15 @@ async function loadChat(){
 
 messages.innerHTML=""
 
-const { data } = await supabase
+const { data, error } = await client
 .from("chat")
 .select("*")
 .order("id",{ascending:false})
+
+if(error){
+console.error(error)
+return
+}
 
 data.forEach(msg=>{
 
