@@ -1,197 +1,71 @@
-let gallery=document.getElementById("gallery")
-let messages=document.getElementById("messages")
-let nameInput=document.getElementById("nameInput")
-let textInput=document.getElementById("textInput")
-let chatImage=document.getElementById("chatImage")
+<script type="module">
 
-function uploadImage(){
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+
+import { getDatabase, ref, push, onChildAdded } 
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB-jTOaLN-akLBAmuMrj724bRG4boYw1E4",
+  authDomain: "alicehyhy-gallery.firebaseapp.com",
+  projectId: "alicehyhy-gallery",
+  storageBucket: "alicehyhy-gallery.firebasestorage.app",
+  messagingSenderId: "204662302298",
+  appId: "1:204662302298:web:5ca9bf9b83c5efa7fe5a63",
+  measurementId: "G-379T855NXV"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+const storage = getStorage(app);
+
+
+
+/* UPLOAD IMAGE */
+
+window.uploadImage = async function(){
 
 let file=document.getElementById("uploadImage").files[0]
+
 if(!file) return
 
-let reader=new FileReader()
+let storageRef = sRef(storage,"images/"+file.name)
 
-reader.onload=function(e){
+await uploadBytes(storageRef,file)
+
+let url = await getDownloadURL(storageRef)
+
+push(ref(db,"gallery"),{
+image:url,
+likes:0
+})
+
+}
+
+
+
+/* LOAD GALLERY REALTIME */
+
+onChildAdded(ref(db,"gallery"),(snap)=>{
+
+let data=snap.val()
 
 let card=document.createElement("div")
 card.className="card"
 
 card.innerHTML=`
-<div class="heart" onclick="likeImage(this)">❤️</div>
-<img src="${e.target.result}" onclick="openImage(this)">
-<div class="comment-box">
-<input class="comment-input">
-<button onclick="addComment(this)">💬</button>
-<div class="comments"></div>
-</div>
+<img src="${data.image}">
+<div class="heart">❤️ ${data.likes}</div>
 `
 
 gallery.prepend(card)
 
-saveGallery()
-
-}
-
-reader.readAsDataURL(file)
-
-}
-
-function addComment(btn){
-
-let box=btn.parentElement
-let input=box.querySelector(".comment-input")
-let list=box.querySelector(".comments")
-
-if(input.value==="") return
-
-let p=document.createElement("p")
-p.textContent="💬 "+input.value
-list.appendChild(p)
-
-input.value=""
-
-saveGallery()
-
-}
-
-function likeImage(el){
-
-el.innerHTML=el.innerHTML==="❤️"?"💖":"❤️"
-
-}
-
-function openImage(img){
-
-let modal=document.getElementById("imageModal")
-let modalImg=document.getElementById("modalImg")
-
-modal.style.display="flex"
-modalImg.src=img.src
-
-}
-
-document.getElementById("imageModal").onclick=()=>imageModal.style.display="none"
-
-document.getElementById("textInput").addEventListener("keydown",e=>{
-if(e.key==="Enter"&&!e.shiftKey){
-e.preventDefault()
-sendMessage()
-}
 })
 
-function addEmoji(){
-
-let emojis=["😀","😂","😍","🥰","🔥","❤️"]
-let e=emojis[Math.floor(Math.random()*emojis.length)]
-
-textInput.value+=e
-
-}
-
-function sendMessage(){
-
-let name=nameInput.value||"Guest"
-let text=textInput.value
-let img=chatImage.files[0]
-
-if(!text && !img) return
-
-let time=new Date().toLocaleTimeString([],{
-hour:'2-digit',
-minute:'2-digit'
-})
-
-let reader=new FileReader()
-
-reader.onload=function(e){
-
-let msg={
-name:name,
-text:text,
-img:e.target.result,
-time:time
-}
-
-saveMessage(msg)
-addMessage(msg)
-
-}
-
-if(img) reader.readAsDataURL(img)
-else{
-
-let msg={name,text,img:null,time}
-saveMessage(msg)
-addMessage(msg)
-
-}
-
-textInput.value=""
-chatImage.value=""
-
-}
-
-function addMessage(msg){
-
-messages.innerHTML+=`
-<div class="message">
-
-<div class="avatar">${msg.name[0]}</div>
-
-<div>
-<b>${msg.name}</b> ${msg.time}
-<div>${msg.text||""}</div>
-${msg.img?`<img src="${msg.img}" class="msg-image">`:""}
-<div class="react" onclick="react(this)">❤️</div>
-</div>
-
-</div>
-`
-
-}
-
-function react(el){
-
-el.innerHTML=el.innerHTML==="❤️"?"💖":"❤️"
-
-}
-
-function saveMessage(msg){
-
-let chat=JSON.parse(localStorage.getItem("chat")||"[]")
-chat.push(msg)
-localStorage.setItem("chat",JSON.stringify(chat))
-
-}
-
-function loadChat(){
-
-let chat=JSON.parse(localStorage.getItem("chat")||"[]")
-chat.forEach(addMessage)
-
-}
-
-function clearChat(){
-
-if(confirm("Xoá toàn bộ chat?")){
-localStorage.removeItem("chat")
-messages.innerHTML=""
-}
-
-}
-
-function saveGallery(){
-
-localStorage.setItem("gallery",gallery.innerHTML)
-
-}
-
-function loadGallery(){
-
-let data=localStorage.getItem("gallery")
-if(data) gallery.innerHTML=data
-
-}
-
-loadChat()
-loadGallery()
+</script>
