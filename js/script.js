@@ -10,20 +10,20 @@ from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB-jTOaLN-akLBAmuMrj724bRG4boYw1E4",
+  apiKey: "AIzaSy...",
   authDomain: "alicehyhy-gallery.firebaseapp.com",
   projectId: "alicehyhy-gallery",
   storageBucket: "alicehyhy-gallery.firebasestorage.app",
   messagingSenderId: "204662302298",
-  appId: "1:204662302298:web:5ca9bf9b83c5efa7fe5a63",
-  measurementId: "G-379T855NXV"
+  appId: "1:204662302298:web:5ca9bf9b83c5efa7fe5a63"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 const storage = getStorage(app);
+
+const gallery = document.getElementById("gallery")
+const messages = document.getElementById("messages")
 
 
 
@@ -35,7 +35,7 @@ let file=document.getElementById("uploadImage").files[0]
 
 if(!file) return
 
-let storageRef = sRef(storage,"images/"+file.name)
+let storageRef = sRef(storage,"images/"+Date.now()+file.name)
 
 await uploadBytes(storageRef,file)
 
@@ -65,6 +65,44 @@ card.innerHTML=`
 `
 
 gallery.prepend(card)
+
+})
+
+
+
+/* SEND MESSAGE */
+
+window.sendMessage=function(){
+
+let name=document.getElementById("nameInput").value
+let text=document.getElementById("textInput").value
+
+push(ref(db,"chat"),{
+name:name,
+text:text
+})
+
+document.getElementById("textInput").value=""
+
+}
+
+
+
+/* LOAD CHAT REALTIME */
+
+onChildAdded(ref(db,"chat"),(snap)=>{
+
+let data=snap.val()
+
+let msg=document.createElement("div")
+msg.className="msg"
+
+msg.innerHTML=`
+<b>${data.name}</b><br>
+${data.text}
+`
+
+messages.prepend(msg)
 
 })
 
